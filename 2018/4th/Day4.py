@@ -57,4 +57,7 @@ for event in input_arr:
    
     events.append(e_obj)
 
+events = sorted(events,key=lambda x: x.timestamp)
 
+for e in events:
+    print(e)
