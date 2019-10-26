@@ -33,6 +33,7 @@ claims = read_claims()
 
 fabric = [[''] * 1000 for i in range(1000)]
 overlap_count = 0
+non_overlapping_claim = [];
 
 for claim in claims:
     for x in range(claim.coords[0], claim.coords[0] + claim.width):
@@ -43,4 +44,16 @@ for claim in claims:
             elif fabric[x][y] == '':
                 fabric[x][y] = 'x'
 
+for claim in claims:
+    overlaps = False
+    for x in range(claim.coords[0], claim.coords[0] + claim.width):
+        for y in range(claim.coords[1], claim.coords[1] + claim.height):
+            if fabric[x][y] == 'X':
+                overlaps = True
+
+    if overlaps is False:
+        non_overlapping_claim.append(claim)
+
+
 print('Overlap:', overlap_count, 'squared inches')
+print('Claim number',non_overlapping_claim, 'doesn\'t overlap')
