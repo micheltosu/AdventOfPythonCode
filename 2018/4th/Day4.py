@@ -59,5 +59,11 @@ for event in input_arr:
 
 events = sorted(events,key=lambda x: x.timestamp)
 
-for e in events:
-    print(e)
+#Parse guard events
+guards = dict()
+for i in range(0,len(events)):
+    #No active shift
+    if events[i] is 
+
+        
+
