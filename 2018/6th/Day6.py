@@ -30,6 +30,9 @@ def manhattan_dist(c1, c2):
 
     return x_dist + y_dist
 
+#################
+# Task 1        #
+#################
 def find_closest(coord, coordlist):
     closest_dist = 999
     closest_coord = (0,0)
@@ -65,15 +68,32 @@ for coord in coordinates:
         to_remove.add(matrix[0][i])
         to_remove.add(matrix[largest_y - 1][i])
 
+filtered_coordinates = coordinates.copy()
 for c in to_remove:
-    if c == (999,999):
-        continue
-    del coordinates[c]
+    if c != (999,999):
+        del filtered_coordinates[c]
+        
 
 # Get a sorted list with the largest area first. Print out to user.
-coordinates_list = sorted(coordinates.items(), key=lambda x: x[1], reverse=True)
+coordinates_list = sorted(filtered_coordinates.items(), key=lambda x: x[1], reverse=True)
 print('The largest non-infinite area is {0} units big and is closest to {1}'.format(coordinates_list[0][1], coordinates_list[0][0]))
 
 
+#################
+# Task 2        #
+#################
 
+dense_area_matrix = [[None] * largest_x for i in range(0,largest_y)]
+dense_area_size = 0
 
+for y in range(0, largest_y):
+    for x in range(0, largest_x):
+        total_dist_to_coordinates = 0
+        for c in coordinates:
+            total_dist_to_coordinates += manhattan_dist((x,y), c)
+
+        if total_dist_to_coordinates < 10000:
+            dense_area_matrix[y][x] = 'X' 
+            dense_area_size += 1
+
+print('Dense area is of size {0}'.format(dense_area_size))
