@@ -6,7 +6,6 @@ largest_y = 0
 smallest_x = 999
 smallest_y = 999
 
-
 for coord in coord_list:
     str_coors = coord.split(', ')
     tuple_coord = (int(str_coors[0]), int(str_coors[1]))
@@ -24,7 +23,6 @@ for coord in coord_list:
         smallest_y = tuple_coord[1]
 
 coord_list.close()
-print(smallest_x, largest_x, smallest_y, largest_y)
 
 def manhattan_dist(c1, c2):
     x_dist = abs(c1[0] - c2[0])
