@@ -27,7 +27,7 @@ def update_stars(stars, velocities):
 def modulo_tuple(dividend, divisor):
   return (np.mod(dividend,divisor))
 
-in_file = open("test.txt");
+in_file = open("input.txt");
 
 pos_coords = list()
 velocities = list()
@@ -40,7 +40,7 @@ max_y = 0
 # the delta of the stars movement each night.
 #
 for line in in_file:
-  match_object = re.search(r"<(.\d), (.\d)>.*<(.\d), (.\d)>",line.strip())
+  match_object = re.search(r"<\s*([\s-]\d+),\s*([\s-]\d+)>.*<\s*([\s-]\d+),\s*([\s-]\d+)>",line.strip())
 
   pos_x, pos_y, vel_x, vel_y = match_object.groups()
   if int(pos_x) > max_x:
