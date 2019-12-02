@@ -12,8 +12,8 @@ The tasks can be found at:
 I try to keep the solutions as simple as possible since it 
 just needs to work and AoC is a competition. If I have the time 
 I do try to tidy them up after both tasks are solved and fix 
- obviously stupid things i have done. However, Python is not my
+ obviously stupid things I have done. However, Python is not my
 native language at the moment. I have surely failed to use 
 language features that could have made the solutions 
-even more straight forward. Hopefully i discover them on the way.
+even more straight forward. Hopefully I discover them on the way.
 
