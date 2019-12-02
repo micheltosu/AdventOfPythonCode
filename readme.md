@@ -1,8 +1,9 @@
 # Advent of Python code
 
 This is a repo for my Advent of Code solutions in Python. 
-I started with the 2018 as a way to learn Python which I
-had not used before. I only made it to day 10 before the
+I started in late October 2019 with the tasks from 2018 as a 
+way to learn Python which I had not used before. 
+I only made it to day 10 before the
 real event for 2019 began so there is where I continued.  
   
 The tasks can be found at:  
