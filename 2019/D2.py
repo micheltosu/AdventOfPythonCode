@@ -23,10 +23,7 @@ def run_program(a1, a2):
     memory[1] = a1
     memory[2] = a2
 
-    while True:
-        if memory[PC] == 99:
-            return memory[0]
-
+    while memory[PC] != 99:
         # Load the arguments
         a1, a2, a3 = memory[PC+1:PC+4]
 
@@ -35,6 +32,8 @@ def run_program(a1, a2):
         elif memory[PC] == 2:
             memory[a3] = memory[a1] * memory[a2]
         forward()
+
+    return memory[0]
 
 #Task 1
 print('The result for verb 12, noun 2: ', run_program(12,2))
