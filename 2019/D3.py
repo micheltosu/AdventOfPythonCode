@@ -4,13 +4,12 @@ lines = open('D3-input.txt').read().strip().split('\n')
 l1 = lines[0].split(',')
 l2 = lines[1].split(',')
 
+# Task 1
 def mark_path(moves):
-    print("Start trace path")
-    global matrix
     path = list()
     pos = [0,0]
     for move in moves:
-        d, length = re.search(r"(\w)(\d+)",move).groups()
+        d, length = re.search(r'(\w)(\d+)',move).groups()
         
         for i in range(int(length)):
             if (d == 'U'):
@@ -22,13 +21,7 @@ def mark_path(moves):
             elif (d == 'L'):
                 pos[0] -= 1
         path.append((pos[0],pos[1]))
-    print("Returning path")
     return path
-
-
-
-path1 = mark_path(l1)
-path2 = mark_path(l2)
 
 def get_rect(p1,p2):
     x = min(p1[0], p2[0])
@@ -38,6 +31,9 @@ def get_rect(p1,p2):
 
     return (x,y,w,h)
 
+# Checks if two rectangles intersect or not. The lines can be viewed
+# as flat rectandles. I check all the conditions that signal impossible
+# intersection.
 def check_intersect(p1, p2):
     if (
         ((p1[0] + p1[2]) < p2[0]) or
@@ -45,27 +41,32 @@ def check_intersect(p1, p2):
         ((p1[1] + p1[3]) < p2[1]) or
         ((p2[1] + p2[3]) < p1[1])
     ):
-        #print("collision found: ", p1, p2)
         return False
     else:
         return True
 
-def find_collision(p1,p2):
+# Find on which coordinates the two lines line1 and line2 intersects
+def find_collision(line1, line2):
     collision_list = list()
-    coll_dict = dict()
     
-    p1list = list()
-    for y in range(p1[1],p1[1] + p1[3] +1):
-        for x in range(p1[0],p1[0] + p1[2] +1):
-            p1list.append((x,y))
+    line1_points = list()
+    # Create all the points that p1 traverses
+    # in this segment.
+    for y in range(line1[1],line1[1] + line1[3] +1):
+        for x in range(line1[0],line1[0] + line1[2] +1):
+            line1_points.append((x,y))
 
-    for y in range(p2[1],p2[1] + p2[3] +1):
-        for x in range(p2[0],p2[0] + p2[2] +1):
-            if (x,y) in p1list:
+    for y in range(line2[1],line2[1] + line2[3] +1):
+        for x in range(line2[0],line2[0] + line2[2] +1):
+            if (x,y) in line1_points:
                 collision_list.append((x,y))
             
 
     return collision_list
+
+
+path1 = mark_path(l1)
+path2 = mark_path(l2)
 
 intersect = list()
 for i in range(len(path1) - 1): #minus 1 so we don't step outside
@@ -84,7 +85,7 @@ for pos in intersect:
     if (manhattan((0,0),min_dist) > manhattan((0,0),pos)):
         min_dist = pos
 
-print("Manhattan distance between closest and 0,0: ", manhattan((0,0),min_dist)) 
+print('Manhattan distance between 0,0 and the intersection closest to it: ', manhattan((0,0),min_dist)) 
 
 
 # Task 2
@@ -122,4 +123,4 @@ for isect in intersect:
 
     isect_dist.append(dist)
 
-print("The closest intersection is reached in {0} steps.".format(min(isect_dist)))
+print('The closest intersection is reached in {0} steps.'.format(min(isect_dist)))
