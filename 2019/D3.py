@@ -4,10 +4,6 @@ lines = open('D3-input.txt').read().strip().split('\n')
 l1 = lines[0].split(',')
 l2 = lines[1].split(',')
 
-#matrix = np.chararray((10000,10000),unicode=True)
-#matrix[:] = '0'
-matrix = [['0'] * 10000 for i in range(10000)]
-
 def mark_path(moves):
     print("Start trace path")
     global matrix
@@ -25,14 +21,7 @@ def mark_path(moves):
                 pos[0] += 1
             elif (d == 'L'):
                 pos[0] -= 1
-            '''
-
-            if matrix[pos[0]][pos[1]] == '0':
-                matrix[pos[0]][pos[1]] = 'x'
-            elif matrix[pos[0]][pos[1]] == 'x':
-                matrix[pos[0]][pos[1]] = 'X' 
-            '''
-        path.append([pos[0],pos[1]])
+        path.append((pos[0],pos[1]))
     print("Returning path")
     return path
 
@@ -62,7 +51,6 @@ def check_intersect(p1, p2):
         return True
 
 def find_collision(p1,p2):
-    print("Find collision for: ", p1,p2)
     collision_list = list()
     coll_dict = dict()
     
@@ -74,11 +62,9 @@ def find_collision(p1,p2):
     for y in range(p2[1],p2[1] + p2[3] +1):
         for x in range(p2[0],p2[0] + p2[2] +1):
             if (x,y) in p1list:
-                print("Collision in : ", x,y)
                 collision_list.append((x,y))
             
 
-    print('Found: {0} collision points for line'.format(len(collision_list)))
     return collision_list
 
 intersect = list()
@@ -91,7 +77,6 @@ for i in range(len(path1) - 1): #minus 1 so we don't step outside
 
 
 def manhattan(p1,p2):
-    print("manhattan of: ", p1,p2)
     return abs((p1[0]-p2[0])) + abs((p1[1]-p2[1]))
 
 min_dist = (10000,10000)
@@ -100,3 +85,41 @@ for pos in intersect:
         min_dist = pos
 
 print("Manhattan distance between closest and 0,0: ", manhattan((0,0),min_dist)) 
+
+
+# Task 2
+def find_dist_to_pos(pos, path):
+    all_dists = list()
+    dist = manhattan((0,0), path[0])
+
+    for i in range(len(path) -1):
+        current_pos = path[i]
+        next_waypoint = path[i + 1]
+
+        if pos[0] == current_pos[0] and pos[0] == next_waypoint[0]:
+            if ((pos[1] > min(current_pos[1], next_waypoint[1])) and 
+                (pos[1] < max(current_pos[1], next_waypoint[1]))):
+                dist += manhattan(pos,current_pos)
+                break
+        elif pos[1] == current_pos[1] and pos[1] == next_waypoint[1]:
+            if ((pos[0] > min(current_pos[0], next_waypoint[0])) and 
+                (pos[0] < max(current_pos[0], next_waypoint[0]))):
+                dist += manhattan(pos,current_pos)
+                break
+        else:
+            dist += manhattan(current_pos, next_waypoint)
+
+
+    return dist
+
+        
+minimum_dist = None
+isect_dist = list()
+for isect in intersect:
+    dist1 = find_dist_to_pos(isect, path1)
+    dist2 = find_dist_to_pos(isect, path2)
+    dist = dist1 + dist2
+
+    isect_dist.append(dist)
+
+print("The closest intersection is reached in {0} steps.".format(min(isect_dist)))
