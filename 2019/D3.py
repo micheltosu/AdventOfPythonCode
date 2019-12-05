@@ -64,10 +64,16 @@ def find_collision(line1, line2):
 
     return collision_list
 
+def manhattan(p1,p2):
+    return abs((p1[0]-p2[0])) + abs((p1[1]-p2[1]))
 
+
+# Get the coordinates for the lines turning points
 path1 = mark_path(l1)
 path2 = mark_path(l2)
 
+# Find all intersections between the paths created between
+# the coordinates in the previous step.
 intersect = list()
 for i in range(len(path1) - 1): #minus 1 so we don't step outside
     line1 = get_rect(path1[i],path1[i+1]) #plus 1 to get next path
@@ -77,15 +83,10 @@ for i in range(len(path1) - 1): #minus 1 so we don't step outside
             intersect.extend(find_collision(line1, line2))
 
 
-def manhattan(p1,p2):
-    return abs((p1[0]-p2[0])) + abs((p1[1]-p2[1]))
-
-min_dist = (10000,10000)
-for pos in intersect:
-    if (manhattan((0,0),min_dist) > manhattan((0,0),pos)):
-        min_dist = pos
-
-print('Manhattan distance between 0,0 and the intersection closest to it: ', manhattan((0,0),min_dist)) 
+# Find the smallest distance between an intersection coordinate and
+# the origin.
+min_dist = min([manhattan((0,0), pos) for pos in intersect])
+print('Manhattan distance between 0,0 and the intersection closest to it: ', min_dist) 
 
 
 # Task 2
