@@ -1,8 +1,8 @@
+# Read input, the format is SSS)YYY, means that YYY orbits SSS. 
+# Store in map with the center of orbit as key.
 orb_input = open('D6-input.txt').read().strip().split('\n')
 
-orbs = list()
 orb_map = dict()
-
 for orb in orb_input:
     split = orb.split(')')
     if split[0] not in orb_map:
@@ -12,6 +12,8 @@ for orb in orb_input:
     else:
        orb_map[split[0]].append(split[1])
 
+# Task 1 - Find all direct and indirect orbit. Star orbits are 
+#  transitive relations. 
 def find_sattelites(key, chain = 0):
     if key not in orb_map:
         return chain
@@ -23,18 +25,11 @@ def find_sattelites(key, chain = 0):
 
 print('Number or direct and indirect orbits: ', find_sattelites('COM'))
 
-def has_path(fr, to):
-    path_exists = False
-    if fr in orb_map:
-        for orb in orb_map[fr]:
-            if orb == to:
-                return True
-            elif has_path(orb, to) is True:
-                path_exists = True
-
-            
-    return path_exists
-
+# Task 2 - Find how many stars we must orbit jump between to get from the 
+#  star we're orbiting around. We can only jump from our star to another 
+#  that our star is in direct orbit around. We find the last common star
+#  on the path from Centre of Mass. Then count the remaining stars on each 
+#  path from the common to the start and destination star.
 def find_path(fr, to, path):
     if fr == to:
         return path
@@ -47,9 +42,6 @@ def find_path(fr, to, path):
             if p != None:
                 return p
 
-
-
-# Task 2
 you_path = find_path('COM','YOU', list())
 can_path = find_path('COM','SAN', list())
 same_dist = 0
