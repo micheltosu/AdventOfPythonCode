@@ -11,8 +11,6 @@ print("Number of layers", len(layers))
 for l in range(len(layers) ):
     for pos in range( width * height ):
         layers[l - 1].append(pixel_data[(l*row_length) + pos])
-        if pos == 0:
-            print("position: ",(l * row_length) + pos)
 
 
 
@@ -34,7 +32,6 @@ for list in layers:
 
     counts.append((zeros, ones, twos))
 
-print(counts)
 smallest_zero_count = None
 count = None
 for layer in counts:
@@ -46,3 +43,48 @@ for layer in counts:
 
 print(smallest_zero_count)
 print(smallest_zero_count[1] * smallest_zero_count[2])
+
+# Task 2
+image = [[2] * width for i in range(height)]
+for layer in layers:
+    for h in range(height):
+        for w in range(width):
+            layer_pos = (h*width) + w 
+            char = int(layer[layer_pos])
+            if image[h][w] == 2:
+                image[h][w] = char
+
+for row in image:
+    for pos in row:
+        char = ' '
+        if pos == 1:
+            char = ' '
+        elif pos == 0: 
+            char = 'X'
+        print(char, end='')
+    print()
+            
+image2 = [[2] * width for i in range(height)]
+for h in range(height):
+    for w in range(width):
+        layer_pos = (h*width) + w 
+        for layer in layers:
+            pixel = int(image2[h][w])
+            if pixel == 2:
+                print("replace pixel with:",layer[layer_pos])
+                image2[h][w] = int(layer[layer_pos])
+
+print(image2)
+
+
+for row in image2:
+    for pos in row:
+        char = 'X'
+        if pos == 1:
+            char = ' '
+        elif pos == 0: 
+            char = 'X'
+        print(char, end='')
+    print()
+
+
