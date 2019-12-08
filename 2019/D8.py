@@ -10,7 +10,7 @@ print("Number of layers", len(layers))
 
 for l in range(len(layers) ):
     for pos in range( width * height ):
-        layers[l - 1].append(pixel_data[(l*row_length) + pos])
+        layers[l].append(pixel_data[(l*row_length) + pos])
 
 
 
@@ -79,11 +79,11 @@ print(image2)
 
 for row in image2:
     for pos in row:
-        char = 'X'
+        char = ' '
         if pos == 1:
-            char = ' '
+            char ='X'
         elif pos == 0: 
-            char = 'X'
+            char = ' '
         print(char, end='')
     print()
 
