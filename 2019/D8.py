@@ -41,13 +41,15 @@ print('Count of ones multiplied with count of twos: ', least_zeros[1] * least_ze
 # Task 2
 print('Rendering image:\n')
 image = [[2] * width for i in range(height)]
-for layer in layers:
-    for h in range(height):
-        for w in range(width):
+for h in range(height):
+    for w in range(width):
+        if image[h][w] == 2:
             layer_pos = h * width + w 
-            char = int(layer[layer_pos])
-            if image[h][w] == 2:
-                image[h][w] = char
+            for layer in layers:
+                char = int(layer[layer_pos])
+                if char != 2:
+                    image[h][w] = char
+                    break
 
 for row in image:
     for pos in row:
@@ -57,5 +59,3 @@ for row in image:
         print(char, end='')
     print()
             
-
-
