@@ -91,35 +91,35 @@ class Computer:
     #    Computer instructions    # 
     #                             #
     ###############################
-    def add(self, memory, a1, a2, a3, pmode):
+    def add(self, a1, a2, a3, pmode):
         arg1 = self.get_memval(a1, pmode[-1])
         arg2 = self.get_memval(a2, pmode[-2])
         self.set_memval(a3, pmode[-3], arg1 + arg2)
 
-    def mul(self, memory, a1, a2, a3, pmode):
+    def mul(self, a1, a2, a3, pmode):
         arg1 = self.get_memval(a1, pmode[-1])
         arg2 = self.get_memval(a2, pmode[-2])
         self.set_memval(a3, pmode[-3], arg1 * arg2)
 
-    def get_value(self, memory, a1, pmode):
+    def get_value(self, a1, pmode):
         val = int(input("Enter input:"))
         self.set_memval(a1, pmode[-1], val)
 
-    def jump_if_true(self, memory, a1, a2, pmode):
+    def jump_if_true(self, a1, a2, pmode):
         condition = self.get_memval(a1, pmode[-1])
         if condition != 0:
             return self.get_memval(a2, pmode[-2])
         else:
             return -1
 
-    def jump_if_false(self, memory, a1, a2, pmode):
+    def jump_if_false(self, a1, a2, pmode):
         condition = self.get_memval(a1, pmode[-1])
         if condition == 0:
             return self.get_memval(a2, pmode[-2])
         else:
             return -1
 
-    def less_than(self, memory, a1, a2, a3, pmode):
+    def less_than(self, a1, a2, a3, pmode):
         arg1 = self.get_memval(a1, pmode[-1])
         arg2 = self.get_memval(a2, pmode[-2])
         if (arg1 < arg2):
@@ -127,7 +127,7 @@ class Computer:
         else:
             self.set_memval(a3, pmode[-3], 0)
 
-    def equals(self, memory, a1, a2, a3, pmode):
+    def equals(self, a1, a2, a3, pmode):
         arg1 = self.get_memval(a1, pmode[-1])
         arg2 = self.get_memval(a2, pmode[-2])
         if (arg1 == arg2):
@@ -135,7 +135,7 @@ class Computer:
         else:
             self.set_memval(a3, pmode[-3], 0)
 
-    def get_value_stream(self, memory, a1, stream, read_pos):
+    def get_value_stream(self, a1, stream, read_pos):
         inpt = stream.getvalue().strip().split('\n')
         if (read_pos >= len(inpt)):
             raise Computer.NoInput('novalue')
@@ -147,7 +147,7 @@ class Computer:
             raise Computer.NoInput('no value')
 
 
-    def output_value_stream(self, memory, a1, pmode, stream):
+    def output_value_stream(self, a1, pmode, stream):
         stream.write(str(self.get_memval(a1, pmode[-1])) + '\n')
 
     ###########################
@@ -170,48 +170,48 @@ class Computer:
 
         elif opcode == 1: # Add
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
-            self.add(memory, a1, a2, a3, p_modes)
+            self.add(a1, a2, a3, p_modes)
             self.PC += 4
         elif opcode == 2:
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
-            self.mul(memory, a1, a2, a3, p_modes)
+            self.mul(a1, a2, a3, p_modes)
             self.PC += 4
         elif opcode == 3: # Get input from stream
             a1 = memory[self.PC+1]
             try:
                 if self.in_stream_set is False:
-                    self.get_value(self.memory, a1, p_modes)
+                    self.get_value(a1, p_modes)
                 else:
-                    self.get_value_stream(memory, a1, self.in_stream, self.read_pos)
+                    self.get_value_stream(a1, self.in_stream, self.read_pos)
                     self.read_pos += 1
                 self.PC += 2
             except Computer.NoInput:
                 return
         elif opcode == 4: # Print to stream
             a1 = memory[self.PC+1]
-            self.output_value_stream(memory, a1, p_modes, self.out_stream)
+            self.output_value_stream(a1, p_modes, self.out_stream)
             self.PC += 2
         elif opcode == 5:
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
-            res = self.jump_if_true(memory, a1, a2, p_modes)
+            res = self.jump_if_true(a1, a2, p_modes)
             if res != -1:
                 self.PC = res
             else:
                 self.PC += 3
         elif opcode == 6: # Jump if false
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
-            res = self.jump_if_false(memory, a1, a2, p_modes)
+            res = self.jump_if_false(a1, a2, p_modes)
             if res != -1:
                 self.PC = res
             else:
                 self.PC += 3
         elif opcode == 7:
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
-            self.less_than(memory, a1, a2, a3, p_modes)
+            self.less_than(a1, a2, a3, p_modes)
             self.PC += 4
         elif opcode == 8: # Check if equals
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
-            self.equals(memory, a1, a2, a3, p_modes)
+            self.equals(a1, a2, a3, p_modes)
             self.PC += 4
         elif opcode == 9:
             a1 = memory[self.PC+1]
