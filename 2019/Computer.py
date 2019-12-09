@@ -13,18 +13,30 @@ class Computer:
     in_stream = None
     out_stream = None
     in_stream_set = False
+    interactive = True
 
     def __init__(self, int_array = None):
         if int_array is not None:
             self.copy_memory(int_array)
-            self.out_stream = io.StringIO()
-            self.in_stream = io.StringIO()
+        self.out_stream = io.StringIO()
+        self.in_stream = io.StringIO()
 
     ###################################
     #                                 #
     #    Computer helper functions    #
     #                                 #
     ###################################
+
+    def prepare_new_run(self):
+        self.PC = 0
+        self.read_pos = 0
+        self.relative_base = 0
+        self.out_stream = io.StringIO()
+        self.interactive = True
+
+    def cleanup_after_run(self):
+        self.in_stream = io.StringIO()
+        self.in_stream_set = False
 
     # Function that returns a fresh copy of the program from 'disk'
     def copy_memory(self, int_array):
@@ -135,14 +147,15 @@ class Computer:
         else:
             self.set_memval(a3, pmode[-3], 0)
 
-    def get_value_stream(self, a1, stream, read_pos):
+    def get_value_stream(self, a1, modes, stream, read_pos):
         inpt = stream.getvalue().strip().split('\n')
         if (read_pos >= len(inpt)):
             raise Computer.NoInput('novalue')
 
         val = inpt[read_pos]
         if val != '' and val != '\n':
-            self.set_memval(a1, 0, int(val))
+            self.set_memval(a1, modes[-1], int(val))
+            self.read_pos += 1
         else:
             raise Computer.NoInput('no value')
 
@@ -165,25 +178,24 @@ class Computer:
         opcode = self.parse_opcode(memory[self.PC])
         # Load the arguments
 
-        if opcode == 99:
+        if opcode == 99: # Halt
             raise Computer.NoMoreSteps('At program end')
 
         elif opcode == 1: # Add
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
             self.add(a1, a2, a3, p_modes)
             self.PC += 4
-        elif opcode == 2:
+        elif opcode == 2: # Multiply
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
             self.mul(a1, a2, a3, p_modes)
             self.PC += 4
         elif opcode == 3: # Get input from stream
             a1 = memory[self.PC+1]
             try:
-                if self.in_stream_set is False:
+                if self.interactive is True:
                     self.get_value(a1, p_modes)
                 else:
-                    self.get_value_stream(a1, self.in_stream, self.read_pos)
-                    self.read_pos += 1
+                    self.get_value_stream(a1, p_modes, self.in_stream, self.read_pos)
                 self.PC += 2
             except Computer.NoInput:
                 return
@@ -191,7 +203,7 @@ class Computer:
             a1 = memory[self.PC+1]
             self.output_value_stream(a1, p_modes, self.out_stream)
             self.PC += 2
-        elif opcode == 5:
+        elif opcode == 5: # Jump if true
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
             res = self.jump_if_true(a1, a2, p_modes)
             if res != -1:
@@ -205,7 +217,7 @@ class Computer:
                 self.PC = res
             else:
                 self.PC += 3
-        elif opcode == 7:
+        elif opcode == 7: # Check if less than
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
             self.less_than(a1, a2, a3, p_modes)
             self.PC += 4
@@ -213,7 +225,7 @@ class Computer:
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
             self.equals(a1, a2, a3, p_modes)
             self.PC += 4
-        elif opcode == 9:
+        elif opcode == 9: # Update relative base
             a1 = memory[self.PC+1]
             param = self.get_memval(a1, p_modes[-1])
             self.set_relative_base(param)
@@ -225,17 +237,24 @@ class Computer:
         self.__perform_cycle__()
 
     # Runs the program from start to end
-    def run_program(self, *args):
+    def run_program(self, *args, program=None, interactive = True):
+        if program is not None:
+            self.copy_memory(program)
+        self.prepare_new_run()
+
+        self.interactive = interactive
+        if self.in_stream_set is True:
+            self.interactive = False
 
         arg_arr = [str(args[i]) for i in range(len(args))]
         self.in_stream.write('\n'.join(arg_arr))
         
-
-        while self.memory[self.PC] != 99:
+        while True:
             try:
                 self.__perform_cycle__()
             except Computer.NoMoreSteps:
                 print('Program finished')
+                self.cleanup_after_run()
                 break
 
         if (len(self.out_stream.getvalue()) == 0):
