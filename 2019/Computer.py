@@ -1,4 +1,4 @@
-
+import io
 class Computer:
     class NoMoreSteps(Exception):
         pass
@@ -7,8 +7,10 @@ class Computer:
 
 
     memory = None
+    seconday_memory = None
     PC = 0
     read_pos = 0
+    relative_base = 0
     in_stream = None
     out_stream = None
 
@@ -27,6 +29,8 @@ class Computer:
     # Function that returns a fresh copy of the program from 'disk'
     def copy_memory(self, int_array):
         self.memory = int_array.copy()
+        self.secondary_memory = [0 for _ in range(len(self.memory) * 10)]
+        self.memory.extend(self.secondary_memory)
 
     def parse_param_modes(self, opcode):
         digits = [int(i) for i in str(opcode)]
@@ -51,6 +55,24 @@ class Computer:
 
     def set_out_stream(self, out_stream = None):
         self.out_stream = out_stream
+
+    def get_out_stream(self):
+        return self.out_stream
+
+    def get_memval(self, location, mode):
+        if location < 0:
+            raise Exception('No negative memory locations')
+
+        if mode == 0:
+            return self.memory[location]
+        elif mode == 1:
+            return location
+        elif mode == 2:
+            return self.memory[location + self.relative_base]
+
+    def set_relative_base(self, val):
+        self.relative_base += val
+
 
 
     ###############################
@@ -118,6 +140,7 @@ class Computer:
 
 
     def output_value_stream(self, memory, a1, pmode, stream):
+        print('print to stream: ', a1)
         stream.write(str(self.get_param(a1, pmode[-1], memory)) + '\n')
 
     ###########################
@@ -181,6 +204,11 @@ class Computer:
             a1, a2, a3 = memory[self.PC+1:self.PC+4]
             self.equals(memory, a1, a2, a3, p_modes)
             self.PC += 4
+        elif opcode == 9:
+            a1 = memory[self.PC+1]
+            param = self.get_param(a1, p_modes[-1], self.memory)
+            self.set_relative_base(param)
+            self.PC += 2
         else:
             raise Computer.NoMoreSteps('At program end')
 
@@ -195,7 +223,11 @@ class Computer:
         
 
         while self.memory[self.PC] != 99:
-            self.__perform_cycle__()
+            try:
+                self.__perform_cycle__()
+            except Computer.NoMoreSteps:
+                print('Program finished')
+                break
 
         if (len(self.out_stream.getvalue()) == 0):
             return self.memory[0]
