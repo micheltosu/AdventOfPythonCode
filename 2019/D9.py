@@ -14,5 +14,4 @@ print(com.get_out_stream().getvalue())
 
 print(com2.run_program())
 print(com3.run_program())
-
 print(task1.run_program())
