@@ -70,7 +70,6 @@ class Computer:
         return self.out_stream
 
     def get_memval(self, location, mode):
-        #print('get_memval: loc, mode', location, mode)
         if location < 0 and mode == 0:
             raise Exception('No negative memory locations')
 
@@ -81,7 +80,6 @@ class Computer:
         elif mode == 2:
             return self.memory[location + self.relative_base]
     def set_memval(self, location, mode, value):
-        #print('set memval: loc, mode, valu ', location, mode, value)
         if location < 0 and mode != 2:
             raise Exception('No negative memory locations')
 
@@ -171,12 +169,9 @@ class Computer:
 
     def __perform_cycle__(self):
         memory = self.memory
-        i = ''.join(self.in_stream.getvalue().split('\n'))
-        o = ''.join(self.out_stream.getvalue().split('\n'))
 
         p_modes = self.parse_param_modes(memory[self.PC]) 
         opcode = self.parse_opcode(memory[self.PC])
-        # Load the arguments
 
         if opcode == 99: # Halt
             raise Computer.NoMoreSteps('At program end')
